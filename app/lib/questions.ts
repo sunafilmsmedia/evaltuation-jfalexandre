@@ -150,42 +150,11 @@ export const questions: Question[] = [
     ],
   },
   {
-    id: "householdIncome",
-    type: "single",
-    title: "Quel est le revenu annuel de votre ménage ?",
-    subtitle:
-      "Cela nous aide à estimer votre nouveau pouvoir d'achat hypothécaire.",
-    required: true,
-    options: [
-      { value: "lt75", label: "Moins de 75 000 $" },
-      { value: "75to125", label: "Entre 75 000 $ et 125 000 $" },
-      { value: "125to200", label: "Entre 125 000 $ et 200 000 $" },
-      { value: "gt200", label: "Plus de 200 000 $" },
-      { value: "skip", label: "Je préfère ne pas répondre" },
-    ],
-  },
-  {
     id: "region",
     type: "region-map",
     title: "Où se situe votre propriété ?",
     subtitle: "Cliquez sur votre secteur du Grand Montréal.",
     required: true,
-  },
-  {
-    id: "reason",
-    type: "multi",
-    title: "Pourquoi songez-vous à vendre ?",
-    subtitle: "Plusieurs choix possibles.",
-    required: true,
-    options: [
-      { value: "bigger", label: "Avoir plus grand" },
-      { value: "smaller", label: "Avoir plus petit / réduire" },
-      { value: "location", label: "Changer de quartier ou de ville" },
-      { value: "financial", label: "Libérer de l'équité / mieux financier" },
-      { value: "lifeChange", label: "Changement de vie (couple, retraite…)" },
-      { value: "investment", label: "Investir ailleurs" },
-      { value: "curious", label: "Juste curieux·se du marché" },
-    ],
   },
   {
     id: "lead",

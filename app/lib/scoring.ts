@@ -181,32 +181,6 @@ export function computeScore(answers: Answers): ScoreResult {
     });
   }
 
-  // Revenu du ménage
-  const income = answers.householdIncome as string | undefined;
-  if (income === "gt200" || income === "125to200") {
-    score += 4;
-  } else if (income === "lt75") {
-    score -= 2;
-  }
-
-  // Raison
-  const reasons = (answers.reason as string[]) || [];
-  if (reasons.includes("curious")) {
-    score -= 6;
-    factors.push({
-      label: "Motivation exploratoire",
-      impact: "neutre",
-      detail:
-        "Vous êtes en phase d'exploration. Un bilan de marché peut vous aider à clarifier vos options sans engagement.",
-    });
-  }
-  if (reasons.includes("financial") || reasons.includes("investment")) {
-    score += 4;
-  }
-  if (reasons.includes("lifeChange") || reasons.includes("smaller")) {
-    score += 3;
-  }
-
   // Cap final
   score = Math.max(0, Math.min(100, Math.round(score)));
 

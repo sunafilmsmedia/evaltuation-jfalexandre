@@ -97,3 +97,23 @@ input[type="range"]::-moz-range-thumb {
   -ms-overflow-style: none;
   scrollbar-width: none;
 }
+
+/* Leaflet tooltip for region picker */
+.leaflet-tooltip.region-tooltip {
+  background: rgba(255, 255, 255, 0.95);
+  border: 1px solid #dbeafe;
+  border-radius: 8px;
+  color: #0a2540;
+  font-weight: 600;
+  font-size: 12.5px;
+  padding: 4px 10px;
+  box-shadow: 0 4px 12px rgba(29, 78, 216, 0.18);
+  white-space: nowrap;
+}
+.leaflet-tooltip.region-tooltip::before {
+  display: none;
+}
+/* Prevent Leaflet panes from stealing pointer events when not needed */
+.leaflet-container {
+  font-family: inherit;
+}

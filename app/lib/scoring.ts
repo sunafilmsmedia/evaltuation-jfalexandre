@@ -145,25 +145,39 @@ export function computeScore(answers: Answers): ScoreResult {
     }
   }
 
-  // Stabilité emploi
-  const job = answers.jobStability as string | undefined;
-  if (job === "stable") {
+  // Situation financière
+  const finance = answers.financialSituation as string | undefined;
+  if (finance === "employed" || finance === "retired") {
     score += 8;
     factors.push({
-      label: "Emploi stable",
+      label: "Profil financier solide",
       impact: "positif",
       detail:
-        "Une situation d'emploi solide facilite grandement la pré-approbation hypothécaire pour votre prochaine propriété.",
+        "Votre situation financière prévisible facilite l'obtention d'une nouvelle pré-approbation hypothécaire.",
     });
-  } else if (job === "ok") {
+  } else if (finance === "investor") {
+    score += 6;
+    factors.push({
+      label: "Revenus de placements",
+      impact: "positif",
+      detail:
+        "Des revenus de placements stables sont bien vus par les prêteurs, surtout si bien documentés.",
+    });
+  } else if (finance === "selfEmployed" || finance === "entrepreneur") {
     score += 3;
-  } else if (job === "transition" || job === "unstable") {
+    factors.push({
+      label: "Revenus d'affaires",
+      impact: "neutre",
+      detail:
+        "Les prêteurs demanderont généralement 2 ans d'avis de cotisation. À préparer en amont avec votre comptable.",
+    });
+  } else if (finance === "transition") {
     score -= 10;
     factors.push({
-      label: "Emploi en transition",
+      label: "En transition financière",
       impact: "negatif",
       detail:
-        "Les prêteurs exigent généralement plusieurs mois d'historique stable. Mieux vaut sécuriser l'emploi avant de vendre.",
+        "Les prêteurs exigent généralement plusieurs mois d'historique de revenu stable. Mieux vaut sécuriser votre situation avant de vendre.",
     });
   }
 
@@ -191,14 +205,6 @@ export function computeScore(answers: Answers): ScoreResult {
   }
   if (reasons.includes("lifeChange") || reasons.includes("smaller")) {
     score += 3;
-  }
-
-  // Horizon
-  const timeline = answers.timeline as string | undefined;
-  if (timeline === "now" || timeline === "3to6") {
-    score += 4;
-  } else if (timeline === "12plus") {
-    score -= 3;
   }
 
   // Cap final

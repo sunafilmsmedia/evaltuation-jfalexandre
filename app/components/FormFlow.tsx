@@ -7,6 +7,7 @@ import type { ScoreResult } from "@/app/lib/scoring";
 import QuestionInput from "./QuestionInput";
 import LeadCapture, { type LeadData } from "./LeadCapture";
 import ResultScreen, { type AIReport } from "./ResultScreen";
+import RegionPickerMapClient from "./RegionPickerMapClient";
 
 type Answers = Record<string, unknown>;
 
@@ -188,6 +189,11 @@ export default function FormFlow() {
 
             {current.type === "lead" ? (
               <LeadCapture value={lead} onChange={setLead} />
+            ) : current.type === "region-map" ? (
+              <RegionPickerMapClient
+                value={answers[current.id] as string | undefined}
+                onChange={(v) => setAnswer(current.id, v)}
+              />
             ) : (
               <QuestionInput
                 question={current}

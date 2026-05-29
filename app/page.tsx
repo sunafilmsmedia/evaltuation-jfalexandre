@@ -8,8 +8,8 @@ export default function Home() {
       {/* Montreal map background (blue tint, low opacity) */}
       <MontrealMapClient />
 
-      {/* Soft white gradient overlay for legibility */}
-      <div className="absolute inset-0 bg-gradient-to-b from-white/50 via-white/60 to-white/85 pointer-events-none" />
+      {/* Soft white gradient overlay for legibility (lighter to let the map show through) */}
+      <div className="absolute inset-0 bg-gradient-to-b from-white/30 via-white/40 to-white/70 pointer-events-none" />
 
       <div className="relative z-10 flex flex-col items-center px-5 md:px-8 py-10 md:py-14 min-h-screen">
         {/* Header */}

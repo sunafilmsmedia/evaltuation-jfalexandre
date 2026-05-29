@@ -12,7 +12,7 @@ export default function MontrealMap() {
         style={{
           // greyscale → sepia → boost saturation → flip to blue → fade
           filter:
-            "grayscale(1) brightness(1.1) sepia(1) saturate(4) hue-rotate(175deg) opacity(0.35)",
+            "grayscale(1) brightness(1.05) sepia(1) saturate(5) hue-rotate(180deg) opacity(0.65)",
         }}
       >
         <MapContainer
@@ -29,9 +29,9 @@ export default function MontrealMap() {
           style={{ width: "100%", height: "100%", background: "#ffffff" }}
         >
           <TileLayer
-            url="https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png"
+            url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
             subdomains={["a", "b", "c", "d"]}
-            // free OSM/CartoDB tiles — no API key needed
+            // free OSM/CartoDB tiles with street labels — no API key needed
           />
         </MapContainer>
       </div>

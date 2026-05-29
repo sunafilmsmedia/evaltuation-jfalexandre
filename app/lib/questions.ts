@@ -5,7 +5,8 @@ export type QuestionType =
   | "currency"
   | "text"
   | "tel"
-  | "lead";
+  | "lead"
+  | "region-map";
 
 export type Option = {
   value: string;
@@ -130,17 +131,22 @@ export const questions: Question[] = [
     ],
   },
   {
-    id: "jobStability",
+    id: "financialSituation",
     type: "single",
-    title: "Votre situation d'emploi est-elle stable ?",
+    title: "Quelle est votre situation financière ?",
     subtitle:
-      "C'est un facteur important pour la pré-approbation hypothécaire.",
+      "Cela influence votre pouvoir d'achat hypothécaire pour la suite.",
     required: true,
     options: [
-      { value: "stable", label: "Oui, très stable" },
-      { value: "ok", label: "Stable mais pas certain·e à 100 %" },
-      { value: "transition", label: "En transition / nouveau poste" },
-      { value: "unstable", label: "Instable en ce moment" },
+      { value: "employed", label: "Emploi stable (salarié·e)" },
+      { value: "selfEmployed", label: "Travailleur·euse autonome" },
+      {
+        value: "entrepreneur",
+        label: "Entrepreneur·e / propriétaire d'entreprise",
+      },
+      { value: "investor", label: "Revenus de placements / investisseur·euse" },
+      { value: "retired", label: "Retraité·e" },
+      { value: "transition", label: "En transition (entre deux postes)" },
     ],
   },
   {
@@ -160,17 +166,10 @@ export const questions: Question[] = [
   },
   {
     id: "region",
-    type: "single",
-    title: "Dans quelle région se situe votre propriété ?",
+    type: "region-map",
+    title: "Où se situe votre propriété ?",
+    subtitle: "Cliquez sur votre secteur du Grand Montréal.",
     required: true,
-    options: [
-      { value: "montreal", label: "Grand Montréal" },
-      { value: "quebec", label: "Région de Québec" },
-      { value: "rive-sud", label: "Rive-Sud / Montérégie" },
-      { value: "rive-nord", label: "Rive-Nord / Laurentides / Lanaudière" },
-      { value: "estrie", label: "Estrie / Cantons-de-l'Est" },
-      { value: "autre", label: "Autre région du Québec" },
-    ],
   },
   {
     id: "reason",
@@ -186,18 +185,6 @@ export const questions: Question[] = [
       { value: "lifeChange", label: "Changement de vie (couple, retraite…)" },
       { value: "investment", label: "Investir ailleurs" },
       { value: "curious", label: "Juste curieux·se du marché" },
-    ],
-  },
-  {
-    id: "timeline",
-    type: "single",
-    title: "Dans quel horizon envisagez-vous de vendre ?",
-    required: true,
-    options: [
-      { value: "now", label: "Le plus tôt possible" },
-      { value: "3to6", label: "Dans 3 à 6 mois" },
-      { value: "6to12", label: "Dans 6 à 12 mois" },
-      { value: "12plus", label: "Plus d'un an, j'évalue" },
     ],
   },
   {

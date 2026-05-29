@@ -1,5 +1,6 @@
 import dynamic from "next/dynamic";
 import FormFlow from "./components/FormFlow";
+import CourtierBadge from "./components/CourtierBadge";
 
 const House3D = dynamic(() => import("./components/House3D"), {
   ssr: true,
@@ -47,11 +48,14 @@ export default function Home() {
           <FormFlow />
         </section>
 
-        {/* Footer reassurance */}
-        <footer className="mt-12 text-center text-xs text-slate-400 max-w-md">
+        {/* Footer reassurance — extra bottom padding so it never sits under the courtier badge */}
+        <footer className="mt-12 mb-28 md:mb-24 text-center text-xs text-slate-400 max-w-md">
           Vos réponses restent confidentielles. Aucun engagement, aucun frais.
         </footer>
       </div>
+
+      {/* Floating courtier card (more prominent on mobile) */}
+      <CourtierBadge />
     </main>
   );
 }

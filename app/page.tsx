@@ -1,22 +1,15 @@
-import dynamic from "next/dynamic";
 import FormFlow from "./components/FormFlow";
 import CourtierBadge from "./components/CourtierBadge";
-
-const House3D = dynamic(() => import("./components/House3D"), {
-  ssr: true,
-  loading: () => null,
-});
+import MontrealMapClient from "./components/MontrealMapClient";
 
 export default function Home() {
   return (
     <main className="relative min-h-screen page-vignette overflow-hidden">
-      {/* 3D house background */}
-      <div className="absolute inset-0 opacity-70 md:opacity-90">
-        <House3D />
-      </div>
+      {/* Montreal map background (blue tint, low opacity) */}
+      <MontrealMapClient />
 
-      {/* Soft white overlay for legibility */}
-      <div className="absolute inset-0 bg-gradient-to-b from-white/40 via-white/60 to-white/85 pointer-events-none" />
+      {/* Soft white gradient overlay for legibility */}
+      <div className="absolute inset-0 bg-gradient-to-b from-white/50 via-white/60 to-white/85 pointer-events-none" />
 
       <div className="relative z-10 flex flex-col items-center px-5 md:px-8 py-10 md:py-14 min-h-screen">
         {/* Header */}

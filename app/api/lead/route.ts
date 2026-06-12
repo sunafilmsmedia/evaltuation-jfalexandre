@@ -111,11 +111,13 @@ export async function POST(req: NextRequest) {
 
   const score = computeScore(answers || {});
 
-  // Honor the deletion promise: if not a good time, do not store/forward.
-  if (score.verdict === "defavorable") {
+  // Honor the deletion promise: if score is below 50, drop the lead entirely.
+  // (Score thresholds: favorable ≥65, moyen 45-64, defavorable <45 — but we
+  // delete below 50 so that borderline "moyen" leads aren't contacted either.)
+  if (score.score < 50) {
     return NextResponse.json({
       stored: false,
-      reason: "verdict_defavorable",
+      reason: "score_below_threshold",
       score,
     });
   }

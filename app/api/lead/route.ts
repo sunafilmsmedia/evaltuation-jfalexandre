@@ -13,6 +13,72 @@ type LeadPayload = {
 };
 
 /**
+ * Build a payload that GoHighLevel (and most CRMs) will map automatically.
+ * Top-level fields use the field names GHL's contact mapper recognizes.
+ */
+function buildGhlPayload(
+  fullName: string,
+  phone: string,
+  email: string | undefined,
+  score: ReturnType<typeof computeScore>,
+  answers: Record<string, unknown>,
+) {
+  const trimmed = fullName.trim();
+  const firstSpace = trimmed.indexOf(" ");
+  const firstName = firstSpace === -1 ? trimmed : trimmed.slice(0, firstSpace);
+  const lastName = firstSpace === -1 ? "" : trimmed.slice(firstSpace + 1);
+
+  const tags = [
+    "courtier-form",
+    `verdict-${score.verdict}`,
+    `score-${score.score}`,
+  ];
+
+  return {
+    source: "courtier-form",
+    receivedAt: new Date().toISOString(),
+
+    // GHL-recognized contact fields (top-level)
+    firstName,
+    lastName,
+    name: trimmed,
+    phone,
+    email: email ?? "",
+    tags,
+
+    // Lead qualification
+    score: score.score,
+    verdict: score.verdict,
+
+    // Full context (custom fields / workflow lookups)
+    propertyType: answers.propertyType ?? null,
+    yearsOwned: answers.yearsOwned ?? null,
+    purchasePrice: answers.purchasePrice ?? null,
+    estimatedValue: answers.estimatedValue ?? null,
+    mortgageStatus: answers.mortgageStatus ?? null,
+    hasKids: answers.hasKids ?? null,
+    kidsStatus: answers.kidsStatus ?? null,
+    planningKids: answers.planningKids ?? null,
+    financialSituation: answers.financialSituation ?? null,
+    region: answers.region ?? null,
+
+    // Derived numbers for easy use in GHL workflows / emails
+    appreciationPercent: score.appreciation
+      ? Math.round(score.appreciation.percent)
+      : null,
+    appreciationAmount: score.appreciation
+      ? Math.round(score.appreciation.absolute)
+      : null,
+    annualizedReturnPercent: score.appreciation
+      ? Number(score.appreciation.annualized.toFixed(2))
+      : null,
+
+    // Keep the raw bundle for debugging / future-proofing
+    answers,
+  };
+}
+
+/**
  * Forwards qualified leads to a configurable CRM webhook.
  * Rules:
  *  - If the verdict is "defavorable" (not a good time to sell), we DO NOT
@@ -78,20 +144,7 @@ export async function POST(req: NextRequest) {
           ? { "X-Webhook-Secret": process.env.CRM_WEBHOOK_SECRET }
           : {}),
       },
-      body: JSON.stringify({
-        source: "courtier-form",
-        receivedAt: new Date().toISOString(),
-        lead: {
-          name,
-          phone,
-          email: payload.email ?? null,
-        },
-        scoring: {
-          score: score.score,
-          verdict: score.verdict,
-        },
-        answers,
-      }),
+      body: JSON.stringify(buildGhlPayload(name, phone, payload.email, score, answers)),
     });
 
     if (!res.ok) {

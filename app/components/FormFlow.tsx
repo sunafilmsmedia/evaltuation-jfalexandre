@@ -8,6 +8,7 @@ import QuestionInput from "./QuestionInput";
 import LeadCapture, { type LeadData } from "./LeadCapture";
 import ResultScreen, { type AIReport } from "./ResultScreen";
 import RegionPickerMapClient from "./RegionPickerMapClient";
+import { trackFbEvent } from "@/app/lib/fbq";
 
 type Answers = Record<string, unknown>;
 
@@ -112,6 +113,16 @@ export default function FormFlow() {
       const leadJson = (await leadRes.json().catch(() => ({}))) as {
         stored?: boolean;
       };
+
+      // Fire Meta Pixel "Lead" only for actually qualified leads (score ≥ 50).
+      // Sub-50 leads are dropped server-side, so we don't want Meta to optimize
+      // toward them.
+      if (leadJson.stored) {
+        trackFbEvent("Lead", {
+          score: data.score.score,
+          verdict: data.score.verdict,
+        });
+      }
 
       setResult({
         score: data.score,

@@ -9,9 +9,9 @@ declare global {
 }
 
 /**
- * Fire a Meta Pixel event. No-op on the server or if the pixel hasn't loaded.
- * Use standard event names ("Lead", "CompleteRegistration", "Contact"…) for
- * automatic optimization in Ads Manager; custom names will go through `trackCustom`.
+ * Fire a Meta Pixel STANDARD event ("Lead", "CompleteRegistration", "Contact"…).
+ * Standard events get automatic optimization support in Ads Manager.
+ * No-op on the server or if the pixel hasn't loaded.
  */
 export function trackFbEvent(
   eventName: string,
@@ -19,4 +19,18 @@ export function trackFbEvent(
 ) {
   if (typeof window === "undefined" || !window.fbq) return;
   window.fbq("track", eventName, params);
+}
+
+/**
+ * Fire a Meta Pixel CUSTOM event (any name you choose, e.g. "Prospect").
+ * Custom events still appear in Ads Manager and can be used as conversion
+ * objectives — they just don't get the auto-detected schema that standard
+ * events do.
+ */
+export function trackFbCustomEvent(
+  eventName: string,
+  params?: Record<string, unknown>,
+) {
+  if (typeof window === "undefined" || !window.fbq) return;
+  window.fbq("trackCustom", eventName, params);
 }

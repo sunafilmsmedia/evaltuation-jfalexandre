@@ -4,6 +4,7 @@ import Script from "next/script";
 import "./globals.css";
 
 const FB_PIXEL_ID = "952496337835266";
+const CLARITY_ID = "x7ny7lclwc";
 
 const inter = Inter({
   variable: "--font-sans",
@@ -48,6 +49,11 @@ export default function RootLayout({
             src={`https://www.facebook.com/tr?id=${FB_PIXEL_ID}&ev=PageView&noscript=1`}
           />
         </noscript>
+
+        {/* Microsoft Clarity (heatmaps + session recordings) */}
+        <Script id="ms-clarity" strategy="afterInteractive">
+          {`(function(c,l,a,r,i,t,y){c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);})(window,document,"clarity","script","${CLARITY_ID}");`}
+        </Script>
 
         {children}
       </body>

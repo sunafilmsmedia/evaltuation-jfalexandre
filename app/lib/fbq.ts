@@ -20,17 +20,3 @@ export function trackFbEvent(
   if (typeof window === "undefined" || !window.fbq) return;
   window.fbq("track", eventName, params);
 }
-
-/**
- * Fire a Meta Pixel CUSTOM event (any name you choose, e.g. "Prospect").
- * Custom events still appear in Ads Manager and can be used as conversion
- * objectives — they just don't get the auto-detected schema that standard
- * events do.
- */
-export function trackFbCustomEvent(
-  eventName: string,
-  params?: Record<string, unknown>,
-) {
-  if (typeof window === "undefined" || !window.fbq) return;
-  window.fbq("trackCustom", eventName, params);
-}

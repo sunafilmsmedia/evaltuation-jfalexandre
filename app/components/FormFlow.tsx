@@ -8,7 +8,7 @@ import QuestionInput from "./QuestionInput";
 import LeadCapture, { type LeadData } from "./LeadCapture";
 import ResultScreen, { type AIReport } from "./ResultScreen";
 import RegionPickerMapClient from "./RegionPickerMapClient";
-import { trackFbEvent, trackFbCustomEvent } from "@/app/lib/fbq";
+import { trackFbEvent } from "@/app/lib/fbq";
 
 type Answers = Record<string, unknown>;
 
@@ -114,22 +114,13 @@ export default function FormFlow() {
         stored?: boolean;
       };
 
-      // Always fire the custom "Prospect" event on form submission — every
-      // person who completes the form counts as a prospect, regardless of score.
-      trackFbCustomEvent("Prospect", {
+      // Fire Meta Pixel "Lead" — the standard event that appears as "Prospect"
+      // in the French Meta Ads interface. Fires on every successful form
+      // submission, since the user has provided contact info (name/phone/email).
+      trackFbEvent("Lead", {
         score: data.score.score,
         verdict: data.score.verdict,
       });
-
-      // Fire Meta Pixel "Lead" only for actually qualified leads (score ≥ 50).
-      // Sub-50 leads are dropped server-side, so we don't want Meta to optimize
-      // toward them when using the Lead standard event.
-      if (leadJson.stored) {
-        trackFbEvent("Lead", {
-          score: data.score.score,
-          verdict: data.score.verdict,
-        });
-      }
 
       setResult({
         score: data.score,

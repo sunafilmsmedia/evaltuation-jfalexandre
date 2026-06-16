@@ -7,7 +7,9 @@ import {
   CircleMarker,
   Tooltip,
   useMap,
+  useMapEvents,
 } from "react-leaflet";
+import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 
 type Region = {
@@ -26,20 +28,45 @@ export const REGIONS: Region[] = [
   { value: "rive-nord", label: "Rive-Nord", lat: 45.6963, lng: -73.6379 },
 ];
 
+function nearestRegion(lat: number, lng: number): Region {
+  const point = L.latLng(lat, lng);
+  let best = REGIONS[0];
+  let bestDist = point.distanceTo(L.latLng(best.lat, best.lng));
+  for (let i = 1; i < REGIONS.length; i++) {
+    const r = REGIONS[i];
+    const d = point.distanceTo(L.latLng(r.lat, r.lng));
+    if (d < bestDist) {
+      bestDist = d;
+      best = r;
+    }
+  }
+  return best;
+}
+
 function FitBounds() {
   const map = useMap();
   useEffect(() => {
     map.fitBounds(
       [
-        [45.36, -74.05],
-        [45.78, -73.32],
+        [45.43, -73.92],
+        [45.72, -73.48],
       ],
-      { padding: [20, 20] },
+      { padding: [10, 10], maxZoom: 11 },
     );
     // Force layout after framer-motion finishes its slide
     const t = setTimeout(() => map.invalidateSize(), 350);
     return () => clearTimeout(t);
   }, [map]);
+  return null;
+}
+
+function MapClickHandler({ onChange }: { onChange: (v: string) => void }) {
+  useMapEvents({
+    click(e) {
+      const nearest = nearestRegion(e.latlng.lat, e.latlng.lng);
+      onChange(nearest.value);
+    },
+  });
   return null;
 }
 
@@ -53,18 +80,19 @@ export default function RegionPickerMap({ value, onChange }: Props) {
     <div className="rounded-2xl overflow-hidden border border-blue-100 h-[360px] md:h-[400px] bg-white shadow-inner">
       <MapContainer
         center={[45.55, -73.7]}
-        zoom={10}
+        zoom={11}
         zoomControl={false}
         scrollWheelZoom={false}
         doubleClickZoom={false}
         attributionControl={false}
-        style={{ width: "100%", height: "100%", background: "#f8fafc" }}
+        style={{ width: "100%", height: "100%", background: "#f8fafc", cursor: "pointer" }}
       >
         <TileLayer
           url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
           subdomains={["a", "b", "c", "d"]}
         />
         <FitBounds />
+        <MapClickHandler onChange={onChange} />
         {REGIONS.map((r) => {
           const selected = value === r.value;
           return (

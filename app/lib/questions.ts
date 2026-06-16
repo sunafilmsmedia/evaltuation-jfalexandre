@@ -69,8 +69,8 @@ export const questions: Question[] = [
   {
     id: "estimatedValue",
     type: "currency",
-    title: "Selon vous, combien vaut-elle aujourd'hui ?",
-    subtitle: "Votre estimation personnelle, on raffinera ensuite.",
+    title: "À combien penses-tu qu'elle vaut aujourd'hui ?",
+    subtitle: "Ton estimation honnête, on raffinera ensuite.",
     placeholder: "525 000",
     min: 0,
     step: 1000,

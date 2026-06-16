@@ -153,8 +153,8 @@ export default function FormFlow() {
   return (
     <div className="w-full max-w-2xl mx-auto">
       {/* Progress bar */}
-      <div className="mb-8">
-        <div className="flex items-center justify-between mb-2 text-xs text-slate-500">
+      <div className="mb-4 md:mb-6">
+        <div className="flex items-center justify-between mb-1.5 text-[11px] md:text-xs text-slate-500">
           <span>
             Question {index + 1} sur {total}
           </span>
@@ -171,7 +171,7 @@ export default function FormFlow() {
       </div>
 
       {/* Animated question card */}
-      <div className="relative min-h-[460px]">
+      <div className="relative">
         <AnimatePresence mode="wait" custom={direction}>
           <motion.div
             key={current.id}
@@ -184,17 +184,17 @@ export default function FormFlow() {
               x: { type: "spring", stiffness: 320, damping: 32 },
               opacity: { duration: 0.2 },
             }}
-            className="rounded-3xl bg-white/85 backdrop-blur-md border border-blue-100 shadow-xl shadow-blue-100/40 p-7 md:p-9"
+            className="rounded-2xl md:rounded-3xl bg-white/90 backdrop-blur-md border border-blue-100 shadow-xl shadow-blue-100/40 p-5 md:p-8"
           >
-            <h2 className="font-display text-2xl md:text-3xl text-[#0a2540] leading-tight mb-2">
+            <h2 className="font-display text-xl md:text-2xl text-[#0a2540] leading-tight mb-1.5">
               {current.title}
             </h2>
             {current.subtitle && (
-              <p className="text-slate-500 text-base mb-6 leading-relaxed">
+              <p className="text-slate-500 text-sm md:text-base mb-4 md:mb-5 leading-relaxed">
                 {current.subtitle}
               </p>
             )}
-            {!current.subtitle && <div className="mb-6" />}
+            {!current.subtitle && <div className="mb-3 md:mb-4" />}
 
             {current.type === "lead" ? (
               <LeadCapture value={lead} onChange={setLead} />
@@ -220,12 +220,12 @@ export default function FormFlow() {
       </div>
 
       {/* Navigation */}
-      <div className="flex items-center justify-between mt-6">
+      <div className="flex items-center justify-between mt-4 md:mt-5">
         <button
           type="button"
           onClick={back}
           disabled={index === 0 || submitting}
-          className="text-sm font-medium text-slate-500 hover:text-[#1d4ed8] disabled:opacity-30 disabled:cursor-not-allowed transition-colors px-3 py-2"
+          className="text-xs md:text-sm font-medium text-slate-500 hover:text-[#1d4ed8] disabled:opacity-30 disabled:cursor-not-allowed transition-colors px-2 md:px-3 py-2"
         >
           ← Précédent
         </button>
@@ -234,7 +234,7 @@ export default function FormFlow() {
           type="button"
           onClick={next}
           disabled={!canAdvance() || submitting}
-          className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-[#1d4ed8] text-white font-medium shadow-lg shadow-blue-200 hover:bg-[#1e40af] disabled:bg-slate-300 disabled:shadow-none disabled:cursor-not-allowed transition-all"
+          className="inline-flex items-center gap-2 px-5 md:px-6 py-2.5 md:py-3 rounded-full bg-[#1d4ed8] text-white text-sm md:text-base font-medium shadow-lg shadow-blue-200 hover:bg-[#1e40af] disabled:bg-slate-300 disabled:shadow-none disabled:cursor-not-allowed transition-all"
         >
           {submitting ? (
             <>

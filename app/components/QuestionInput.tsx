@@ -26,17 +26,16 @@ export default function QuestionInput({
               type="button"
               onClick={() => {
                 onChange(opt.value);
-                // Instant visual selection + auto-advance ~1.2s later so the
-                // user has time to see their choice register before the slide.
-                setTimeout(onAdvance, 1200);
+                // Near-instant auto-advance — short enough to feel snappy.
+                setTimeout(onAdvance, 700);
               }}
-              className={`text-left px-5 py-4 rounded-2xl border transition-all duration-200 ${
+              className={`text-left px-4 md:px-5 py-3 md:py-4 rounded-xl md:rounded-2xl border transition-all duration-200 ${
                 selected
                   ? "border-[#1d4ed8] bg-[#1d4ed8] text-white shadow-lg shadow-blue-200"
                   : "border-blue-100 bg-white/80 backdrop-blur-sm text-[#0a2540] hover:border-[#1d4ed8] hover:bg-blue-50"
               }`}
             >
-              <span className="block text-base font-medium">{opt.label}</span>
+              <span className="block text-sm md:text-base font-medium">{opt.label}</span>
               {opt.hint && (
                 <span
                   className={`block text-xs mt-1 ${selected ? "text-blue-100" : "text-slate-500"}`}

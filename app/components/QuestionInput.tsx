@@ -26,8 +26,9 @@ export default function QuestionInput({
               type="button"
               onClick={() => {
                 onChange(opt.value);
-                // Auto-advance on single-select for fluidity
-                setTimeout(onAdvance, 220);
+                // Instant visual selection + auto-advance ~1.2s later so the
+                // user has time to see their choice register before the slide.
+                setTimeout(onAdvance, 1200);
               }}
               className={`text-left px-5 py-4 rounded-2xl border transition-all duration-200 ${
                 selected

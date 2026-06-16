@@ -26,7 +26,7 @@ export default function Home() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -12 }}
               transition={{ duration: 0.35 }}
-              className="w-full max-w-3xl text-center flex-1 flex flex-col justify-center"
+              className="w-full max-w-3xl text-center flex flex-col items-center pt-4 md:pt-12"
             >
               <div className="inline-flex self-center items-center gap-2 px-4 py-1.5 rounded-full bg-white/80 backdrop-blur-sm border border-blue-100 text-xs text-[#1d4ed8] uppercase tracking-widest mb-5">
                 <span className="w-1.5 h-1.5 rounded-full bg-[#1d4ed8] animate-pulse" />

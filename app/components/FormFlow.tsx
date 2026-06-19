@@ -162,7 +162,12 @@ export default function FormFlow() {
             {current.type === "region-map" ? (
               <RegionPickerMapClient
                 value={answers[current.id] as string | undefined}
-                onChange={(v) => setAnswer(current.id, v)}
+                onChange={(v) => {
+                  setAnswer(current.id, v);
+                  // Auto-advance after a brief pause so the user sees their
+                  // marker turn blue before the slide.
+                  setTimeout(next, 500);
+                }}
               />
             ) : (
               <QuestionInput

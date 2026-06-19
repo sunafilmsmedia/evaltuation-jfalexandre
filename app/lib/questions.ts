@@ -152,8 +152,8 @@ export const questions: Question[] = [
   {
     id: "region",
     type: "region-map",
-    title: "Où se situe votre propriété ?",
-    subtitle: "Cliquez sur votre secteur du Grand Montréal.",
+    title: "Où se situe votre propriété ? (à peu près)",
+    subtitle: "Clique sur la ville ou le secteur le plus proche.",
     required: true,
   },
 ];

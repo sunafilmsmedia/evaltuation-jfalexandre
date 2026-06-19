@@ -100,18 +100,27 @@ input[type="range"]::-moz-range-thumb {
 
 /* Leaflet tooltip for region picker */
 .leaflet-tooltip.region-tooltip {
-  background: rgba(255, 255, 255, 0.95);
+  background: rgba(255, 255, 255, 0.94);
   border: 1px solid #dbeafe;
-  border-radius: 8px;
+  border-radius: 6px;
   color: #0a2540;
   font-weight: 600;
-  font-size: 12.5px;
-  padding: 4px 10px;
-  box-shadow: 0 4px 12px rgba(29, 78, 216, 0.18);
+  font-size: 10.5px;
+  padding: 2px 7px;
+  box-shadow: 0 2px 6px rgba(29, 78, 216, 0.12);
   white-space: nowrap;
 }
 .leaflet-tooltip.region-tooltip::before {
   display: none;
+}
+/* Selected sector: bigger and brand-blue background so it stands out */
+.leaflet-tooltip.region-tooltip-selected {
+  background: #1d4ed8;
+  border-color: #1d4ed8;
+  color: #ffffff;
+  font-size: 12px;
+  padding: 3px 9px;
+  box-shadow: 0 4px 12px rgba(29, 78, 216, 0.35);
 }
 /* Prevent Leaflet panes from stealing pointer events when not needed */
 .leaflet-container {

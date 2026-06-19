@@ -20,12 +20,27 @@ type Region = {
 };
 
 export const REGIONS: Region[] = [
+  // Île de Montréal
   { value: "montreal-centre", label: "Montréal centre", lat: 45.5088, lng: -73.5878 },
-  { value: "ouest-ile", label: "Ouest-de-l'Île", lat: 45.4633, lng: -73.823 },
-  { value: "est-montreal", label: "Est de Montréal", lat: 45.5828, lng: -73.5495 },
+  { value: "verdun-sud-ouest", label: "Verdun / Sud-Ouest", lat: 45.4540, lng: -73.5700 },
+  { value: "ouest-ile", label: "Ouest-de-l'Île", lat: 45.4900, lng: -73.8200 },
+  { value: "est-montreal", label: "Est de Montréal", lat: 45.6100, lng: -73.5500 },
+  { value: "ahuntsic", label: "Ahuntsic / RDP", lat: 45.5700, lng: -73.6500 },
+
+  // Laval
   { value: "laval", label: "Laval", lat: 45.6066, lng: -73.7124 },
-  { value: "rive-sud", label: "Rive-Sud", lat: 45.5312, lng: -73.4583 },
-  { value: "rive-nord", label: "Rive-Nord", lat: 45.6963, lng: -73.6379 },
+
+  // Rive-Sud
+  { value: "longueuil", label: "Longueuil", lat: 45.5400, lng: -73.5100 },
+  { value: "brossard", label: "Brossard", lat: 45.4500, lng: -73.4700 },
+  { value: "boucherville", label: "Boucherville", lat: 45.5950, lng: -73.4400 },
+  { value: "chateauguay", label: "Châteauguay", lat: 45.3700, lng: -73.7500 },
+
+  // Rive-Nord
+  { value: "terrebonne", label: "Terrebonne", lat: 45.7000, lng: -73.6450 },
+  { value: "repentigny", label: "Repentigny", lat: 45.7430, lng: -73.4500 },
+  { value: "saint-eustache", label: "Saint-Eustache", lat: 45.5650, lng: -73.9000 },
+  { value: "blainville", label: "Blainville", lat: 45.6700, lng: -73.8800 },
 ];
 
 function nearestRegion(lat: number, lng: number): Region {
@@ -48,8 +63,8 @@ function FitBounds() {
   useEffect(() => {
     map.fitBounds(
       [
-        [45.43, -73.92],
-        [45.72, -73.48],
+        [45.34, -73.95],
+        [45.78, -73.40],
       ],
       { padding: [10, 10], maxZoom: 11 },
     );
@@ -99,12 +114,12 @@ export default function RegionPickerMap({ value, onChange }: Props) {
             <CircleMarker
               key={r.value}
               center={[r.lat, r.lng]}
-              radius={selected ? 24 : 17}
+              radius={selected ? 18 : 11}
               pathOptions={{
                 color: "#1d4ed8",
-                weight: selected ? 4 : 2,
+                weight: selected ? 3 : 2,
                 fillColor: selected ? "#1d4ed8" : "#3b82f6",
-                fillOpacity: selected ? 0.85 : 0.45,
+                fillOpacity: selected ? 0.9 : 0.45,
               }}
               eventHandlers={{
                 click: () => onChange(r.value),
@@ -113,8 +128,8 @@ export default function RegionPickerMap({ value, onChange }: Props) {
               <Tooltip
                 permanent
                 direction="top"
-                offset={[0, selected ? -22 : -16]}
-                className="region-tooltip"
+                offset={[0, selected ? -16 : -12]}
+                className={`region-tooltip ${selected ? "region-tooltip-selected" : ""}`}
               >
                 {r.label}
               </Tooltip>

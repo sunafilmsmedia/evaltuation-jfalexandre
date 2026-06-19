@@ -5,10 +5,8 @@ import { AnimatePresence, motion } from "framer-motion";
 import { questions } from "@/app/lib/questions";
 import type { ScoreResult } from "@/app/lib/scoring";
 import QuestionInput from "./QuestionInput";
-import LeadCapture, { type LeadData } from "./LeadCapture";
 import ResultScreen, { type AIReport } from "./ResultScreen";
 import RegionPickerMapClient from "./RegionPickerMapClient";
-import { trackFbEvent } from "@/app/lib/fbq";
 
 type Answers = Record<string, unknown>;
 
@@ -26,12 +24,6 @@ const slideVariants = {
 
 export default function FormFlow() {
   const [answers, setAnswers] = useState<Answers>({});
-  const [lead, setLead] = useState<LeadData>({
-    name: "",
-    phone: "",
-    email: "",
-    consent: false,
-  });
   const [index, setIndex] = useState(0);
   const [direction, setDirection] = useState(1);
   const [submitting, setSubmitting] = useState(false);
@@ -39,7 +31,6 @@ export default function FormFlow() {
   const [result, setResult] = useState<{
     score: ScoreResult;
     report: AIReport;
-    leadStored: boolean;
   } | null>(null);
 
   // Filter visible questions based on conditional branching
@@ -54,9 +45,6 @@ export default function FormFlow() {
 
   const canAdvance = (): boolean => {
     if (!current) return false;
-    if (current.type === "lead") {
-      return Boolean(lead.name && lead.phone && lead.consent);
-    }
     if (!current.required) return true;
     const v = answers[current.id];
     if (current.type === "multi")
@@ -99,33 +87,9 @@ export default function FormFlow() {
         report: AIReport;
       };
 
-      const leadRes = await fetch("/api/lead", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          name: lead.name,
-          phone: lead.phone,
-          email: lead.email || undefined,
-          consent: lead.consent,
-          answers,
-        }),
-      });
-      const leadJson = (await leadRes.json().catch(() => ({}))) as {
-        stored?: boolean;
-      };
-
-      // Fire Meta Pixel "Lead" — the standard event that appears as "Prospect"
-      // in the French Meta Ads interface. Fires on every successful form
-      // submission, since the user has provided contact info (name/phone/email).
-      trackFbEvent("Lead", {
-        score: data.score.score,
-        verdict: data.score.verdict,
-      });
-
       setResult({
         score: data.score,
         report: data.report,
-        leadStored: Boolean(leadJson.stored),
       });
     } catch (err) {
       console.error(err);
@@ -142,8 +106,7 @@ export default function FormFlow() {
       <ResultScreen
         score={result.score}
         report={result.report}
-        leadStored={result.leadStored}
-        leadName={lead.name}
+        answers={answers}
       />
     );
   }
@@ -196,9 +159,7 @@ export default function FormFlow() {
             )}
             {!current.subtitle && <div className="mb-3 md:mb-4" />}
 
-            {current.type === "lead" ? (
-              <LeadCapture value={lead} onChange={setLead} />
-            ) : current.type === "region-map" ? (
+            {current.type === "region-map" ? (
               <RegionPickerMapClient
                 value={answers[current.id] as string | undefined}
                 onChange={(v) => setAnswer(current.id, v)}
@@ -262,7 +223,7 @@ export default function FormFlow() {
             </>
           ) : index === total - 1 ? (
             <>
-              Obtenir mon rapport
+              Voir mon évaluation
               <svg className="w-4 h-4" viewBox="0 0 20 20" fill="none">
                 <path
                   d="M4 10h12m0 0l-4-4m4 4l-4 4"

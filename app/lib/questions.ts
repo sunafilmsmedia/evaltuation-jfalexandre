@@ -156,12 +156,4 @@ export const questions: Question[] = [
     subtitle: "Cliquez sur votre secteur du Grand Montréal.",
     required: true,
   },
-  {
-    id: "lead",
-    type: "lead",
-    title: "Recevez votre rapport personnalisé",
-    subtitle:
-      "Nous combinons vos réponses avec les données du marché pour générer votre rapport.",
-    required: true,
-  },
 ];

@@ -26,8 +26,9 @@ export default function QuestionInput({
               type="button"
               onClick={() => {
                 onChange(opt.value);
-                // Instant advance — no delay.
-                onAdvance();
+                // Defer by one tick so React applies the state update before
+                // `next()` re-reads `canAdvance()`. Sub-millisecond, imperceptible.
+                setTimeout(onAdvance, 0);
               }}
               className={`text-left px-4 md:px-5 py-3 md:py-4 rounded-xl md:rounded-2xl border transition-all duration-200 ${
                 selected

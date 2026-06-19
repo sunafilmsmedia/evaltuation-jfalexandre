@@ -6,7 +6,9 @@ type Props = {
   question: Question;
   value: unknown;
   onChange: (value: unknown) => void;
-  onAdvance: () => void;
+  // Optional explicit value lets the caller bypass React's stale-closure race
+  // on `answers` so canAdvance() doesn't reject a just-picked option.
+  onAdvance: (newValue?: unknown) => void;
 };
 
 export default function QuestionInput({
@@ -26,9 +28,9 @@ export default function QuestionInput({
               type="button"
               onClick={() => {
                 onChange(opt.value);
-                // Defer by one tick so React applies the state update before
-                // `next()` re-reads `canAdvance()`. Sub-millisecond, imperceptible.
-                setTimeout(onAdvance, 0);
+                // Pass the value directly so next() doesn't need to wait on
+                // React's state flush to know the answer is set.
+                onAdvance(opt.value);
               }}
               className={`text-left px-4 md:px-5 py-3 md:py-4 rounded-xl md:rounded-2xl border transition-all duration-200 ${
                 selected

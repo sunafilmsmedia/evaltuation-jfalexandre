@@ -43,17 +43,23 @@ export default function FormFlow() {
   const total = visibleQuestions.length;
   const progress = ((index + 1) / total) * 100;
 
-  const canAdvance = (): boolean => {
+  const isValid = (value: unknown): boolean => {
     if (!current) return false;
     if (!current.required) return true;
-    const v = answers[current.id];
     if (current.type === "multi")
-      return Array.isArray(v) && (v as string[]).length > 0;
-    return v !== undefined && v !== null && v !== "";
+      return Array.isArray(value) && (value as string[]).length > 0;
+    return value !== undefined && value !== null && value !== "";
   };
 
-  const next = async () => {
-    if (!canAdvance() || submitting) return;
+  const canAdvance = (): boolean => isValid(answers[current?.id ?? ""]);
+
+  // Accepts an optional explicit value to bypass React state-flush timing —
+  // when called right after `onChange`, the new answer isn't in `answers` yet.
+  const next = async (explicitValue?: unknown) => {
+    if (submitting || !current) return;
+    const valueToCheck =
+      explicitValue !== undefined ? explicitValue : answers[current.id];
+    if (!isValid(valueToCheck)) return;
     if (index === total - 1) {
       await submit();
       return;
@@ -164,9 +170,9 @@ export default function FormFlow() {
                 value={answers[current.id] as string | undefined}
                 onChange={(v) => {
                   setAnswer(current.id, v);
-                  // Auto-advance after a brief pause so the user sees their
-                  // marker turn blue before the slide.
-                  setTimeout(next, 500);
+                  // Pass v explicitly so the post-delay next() doesn't read
+                  // a stale closure. 500ms gives time to see the marker confirm.
+                  setTimeout(() => next(v), 500);
                 }}
               />
             ) : (

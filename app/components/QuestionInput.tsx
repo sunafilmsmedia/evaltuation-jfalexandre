@@ -28,9 +28,9 @@ export default function QuestionInput({
               type="button"
               onClick={() => {
                 onChange(opt.value);
-                // Pass the value directly so next() doesn't need to wait on
-                // React's state flush to know the answer is set.
-                onAdvance(opt.value);
+                // Pause ~500ms so the button visibly turns brand-blue before
+                // the slide — clear confirmation of what was just picked.
+                setTimeout(() => onAdvance(opt.value), 500);
               }}
               className={`text-left px-4 md:px-5 py-3 md:py-4 rounded-xl md:rounded-2xl border transition-all duration-200 ${
                 selected

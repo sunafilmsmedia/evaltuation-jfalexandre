@@ -22,9 +22,18 @@ function fallbackReport(
   score: ReturnType<typeof computeScore>,
 ): AIReport {
   const yearsOwned = Number(answers.yearsOwned) || 0;
-  const appreciation = score.appreciation;
+  const estimated = Number(answers.estimatedValue) || 0;
+  const mortgage = answers.mortgageStatus as string | undefined;
   const isFavorable = score.verdict === "favorable";
   const isMoyen = score.verdict === "moyen";
+
+  const mortgageLabel: Record<string, string> = {
+    paid: "Hypothèque payée",
+    less25: "Moins de 25 % restant",
+    less50: "Entre 25 et 50 % restant",
+    more50: "Plus de 50 % restant",
+    unsure: "À confirmer",
+  };
 
   return {
     headline: isFavorable
@@ -33,7 +42,7 @@ function fallbackReport(
         ? "Le moment est correct, mais peut être optimisé."
         : "Attendre quelques mois pourrait être plus profitable.",
     summary: isFavorable
-      ? "Votre profil combine plusieurs signaux positifs (équité, stabilité, contexte de vie) qui rendent la vente avantageuse maintenant."
+      ? "Votre profil combine plusieurs signaux positifs (équité, stabilité) qui rendent la vente avantageuse maintenant."
       : isMoyen
         ? "Plusieurs facteurs jouent en votre faveur, mais d'autres pourraient être améliorés pour maximiser votre rendement."
         : "Certains éléments importants (équité, emploi ou marché) suggèrent qu'attendre quelques mois pourrait donner un bien meilleur résultat.",
@@ -41,19 +50,13 @@ function fallbackReport(
       {
         label: "Score d'opportunité",
         value: `${score.score}/100`,
-        detail: "Basé sur 8 critères clés du marché et de votre situation.",
+        detail: "Basé sur les critères clés de votre situation.",
       },
-      appreciation
-        ? {
-            label: "Plus-value estimée",
-            value: `${appreciation.percent >= 0 ? "+" : ""}${appreciation.percent.toFixed(0)} %`,
-            detail: `Soit environ ${Math.abs(appreciation.absolute).toLocaleString("fr-CA")} $ ${appreciation.absolute >= 0 ? "de gain" : "de perte"} brute depuis l'achat.`,
-          }
-        : {
-            label: "Plus-value estimée",
-            value: "—",
-            detail: "Estimation indisponible.",
-          },
+      {
+        label: "Valeur estimée",
+        value: estimated ? `${estimated.toLocaleString("fr-CA")} $` : "—",
+        detail: "Votre estimation personnelle de la valeur marchande.",
+      },
       {
         label: "Années de possession",
         value: `${yearsOwned} ans`,
@@ -63,11 +66,9 @@ function fallbackReport(
             : "Vous êtes encore tôt dans votre cycle d'amortissement.",
       },
       {
-        label: "Rendement annualisé",
-        value: appreciation
-          ? `${appreciation.annualized.toFixed(1)} %/an`
-          : "—",
-        detail: "Croissance moyenne de votre propriété par année.",
+        label: "Statut hypothèque",
+        value: mortgage ? (mortgageLabel[mortgage] ?? "—") : "—",
+        detail: "Détermine la part nette que vous récupérez à la vente.",
       },
     ],
     steps: [
@@ -129,7 +130,6 @@ ${JSON.stringify(answers, null, 2)}
 
 Score calculé : ${score.score}/100 (verdict: ${score.verdict})
 Facteurs détectés : ${JSON.stringify(score.factors, null, 2)}
-Appréciation : ${score.appreciation ? JSON.stringify(score.appreciation) : "non calculée"}
 
 Rédige un rapport personnalisé avec EXACTEMENT cette structure JSON :
 {
@@ -137,9 +137,9 @@ Rédige un rapport personnalisé avec EXACTEMENT cette structure JSON :
   "summary": "résumé de 2-3 phrases qui explique le verdict",
   "stats": [
     { "label": "Score d'opportunité", "value": "X/100", "detail": "explication courte" },
-    { "label": "Plus-value estimée", "value": "+X%", "detail": "..." },
+    { "label": "Valeur estimée", "value": "X $", "detail": "..." },
     { "label": "Années de possession", "value": "X ans", "detail": "..." },
-    { "label": "Rendement annualisé", "value": "X%/an", "detail": "..." }
+    { "label": "Statut hypothèque", "value": "...", "detail": "..." }
   ],
   "steps": [
     { "title": "...", "description": "..." },

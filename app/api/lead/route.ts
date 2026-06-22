@@ -53,25 +53,10 @@ function buildGhlPayload(
     // Full context (custom fields / workflow lookups)
     propertyType: answers.propertyType ?? null,
     yearsOwned: answers.yearsOwned ?? null,
-    purchasePrice: answers.purchasePrice ?? null,
     estimatedValue: answers.estimatedValue ?? null,
     mortgageStatus: answers.mortgageStatus ?? null,
-    hasKids: answers.hasKids ?? null,
-    kidsStatus: answers.kidsStatus ?? null,
-    planningKids: answers.planningKids ?? null,
     financialSituation: answers.financialSituation ?? null,
     region: answers.region ?? null,
-
-    // Derived numbers for easy use in GHL workflows / emails
-    appreciationPercent: score.appreciation
-      ? Math.round(score.appreciation.percent)
-      : null,
-    appreciationAmount: score.appreciation
-      ? Math.round(score.appreciation.absolute)
-      : null,
-    annualizedReturnPercent: score.appreciation
-      ? Number(score.appreciation.annualized.toFixed(2))
-      : null,
 
     // Keep the raw bundle for debugging / future-proofing
     answers,

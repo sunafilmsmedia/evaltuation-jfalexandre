@@ -8,11 +8,9 @@ export type ScoreResult = {
     impact: "positif" | "neutre" | "negatif";
     detail: string;
   }[];
-  appreciation: {
-    absolute: number;
-    percent: number;
-    annualized: number;
-  } | null;
+  // Kept for backwards-compat with consumers (fallback report, GHL payload).
+  // Always null now that we don't ask for purchase price.
+  appreciation: null;
 };
 
 export function computeScore(answers: Answers): ScoreResult {
@@ -20,63 +18,27 @@ export function computeScore(answers: Answers): ScoreResult {
   const factors: ScoreResult["factors"] = [];
 
   const yearsOwned = Number(answers.yearsOwned) || 0;
-  const purchase = Number(answers.purchasePrice) || 0;
   const estimated = Number(answers.estimatedValue) || 0;
 
-  // Appreciation
-  let appreciation: ScoreResult["appreciation"] = null;
-  if (purchase > 0 && estimated > 0) {
-    const absolute = estimated - purchase;
-    const percent = (absolute / purchase) * 100;
-    const annualized =
-      yearsOwned > 0
-        ? (Math.pow(estimated / purchase, 1 / yearsOwned) - 1) * 100
-        : percent;
-    appreciation = { absolute, percent, annualized };
-
-    if (percent >= 50) {
-      score += 18;
-      factors.push({
-        label: "Forte plus-value",
-        impact: "positif",
-        detail: `Votre propriété s'est appréciée d'environ ${percent.toFixed(0)} % — un excellent point de départ pour vendre.`,
-      });
-    } else if (percent >= 20) {
-      score += 10;
-      factors.push({
-        label: "Belle plus-value",
-        impact: "positif",
-        detail: `Une appréciation de ${percent.toFixed(0)} % vous donne une bonne marge nette à la revente.`,
-      });
-    } else if (percent >= 0) {
-      score += 2;
-      factors.push({
-        label: "Plus-value modeste",
-        impact: "neutre",
-        detail: `Une appréciation de ${percent.toFixed(0)} % est positive mais limitée. Attendre pourrait améliorer le rendement.`,
-      });
-    } else {
-      score -= 12;
-      factors.push({
-        label: "Valeur en baisse",
-        impact: "negatif",
-        detail: `Votre estimation actuelle est inférieure au prix d'achat. Vendre maintenant risque de cristalliser une perte.`,
-      });
-    }
-  }
-
-  // Durée de possession
-  if (yearsOwned >= 5) {
-    score += 6;
+  // Durée de possession — proxy for equity build-up
+  if (yearsOwned >= 8) {
+    score += 14;
     factors.push({
-      label: "Équité accumulée",
+      label: "Équité solide",
       impact: "positif",
-      detail: `Avec ${yearsOwned} ans de possession, vous avez probablement remboursé une part significative de votre capital.`,
+      detail: `Avec ${yearsOwned} ans de possession, vous avez bâti une équité importante dans votre propriété.`,
+    });
+  } else if (yearsOwned >= 5) {
+    score += 9;
+    factors.push({
+      label: "Bonne équité accumulée",
+      impact: "positif",
+      detail: `Après ${yearsOwned} ans, une part significative de votre capital a été remboursée.`,
     });
   } else if (yearsOwned >= 2) {
-    score += 2;
+    score += 3;
   } else {
-    score -= 8;
+    score -= 12;
     factors.push({
       label: "Possession récente",
       impact: "negatif",
@@ -84,10 +46,23 @@ export function computeScore(answers: Answers): ScoreResult {
     });
   }
 
-  // Hypothèque
+  // Valeur estimée — proxy for whether seller has assets to leverage
+  if (estimated >= 750000) {
+    score += 6;
+    factors.push({
+      label: "Propriété de valeur élevée",
+      impact: "positif",
+      detail:
+        "Une propriété au-dessus de 750 000 $ vous donne un excellent levier financier pour la suite.",
+    });
+  } else if (estimated >= 450000) {
+    score += 3;
+  }
+
+  // Hypothèque — most direct equity signal
   const mortgage = answers.mortgageStatus as string | undefined;
   if (mortgage === "paid") {
-    score += 10;
+    score += 18;
     factors.push({
       label: "Hypothèque payée",
       impact: "positif",
@@ -95,60 +70,29 @@ export function computeScore(answers: Answers): ScoreResult {
         "Vous récupérerez la quasi-totalité de la valeur nette à la vente.",
     });
   } else if (mortgage === "less25") {
-    score += 6;
+    score += 12;
+    factors.push({
+      label: "Hypothèque presque remboursée",
+      impact: "positif",
+      detail:
+        "Avec moins de 25 % restant à rembourser, votre équité est très avantageuse.",
+    });
+  } else if (mortgage === "less50") {
+    score += 4;
   } else if (mortgage === "more50") {
-    score -= 4;
+    score -= 6;
+    factors.push({
+      label: "Hypothèque encore élevée",
+      impact: "negatif",
+      detail:
+        "Avec plus de la moitié de l'hypothèque à rembourser, l'équité disponible à la vente reste limitée.",
+    });
   }
 
-  // Situation familiale
-  const hasKids = answers.hasKids;
-  const kidsStatus = answers.kidsStatus;
-  const planningKids = answers.planningKids;
-
-  if (hasKids === "yes") {
-    if (kidsStatus === "leftHome") {
-      score += 10;
-      factors.push({
-        label: "Nid vide",
-        impact: "positif",
-        detail:
-          "Vos enfants ont quitté la maison — un excellent moment pour réduire ou changer de style de vie.",
-      });
-    } else if (kidsStatus === "leavingSoon") {
-      score += 6;
-      factors.push({
-        label: "Transition familiale",
-        impact: "positif",
-        detail:
-          "Vos enfants partent bientôt : planifier la vente dans les prochains mois est cohérent.",
-      });
-    } else if (kidsStatus === "growing") {
-      score += 8;
-      factors.push({
-        label: "Besoin d'espace",
-        impact: "positif",
-        detail:
-          "Avec une famille qui grandit, monter en gamme maintenant évite d'avoir à le faire en urgence plus tard.",
-      });
-    }
-  } else if (hasKids === "no") {
-    if (planningKids === "yesSoon") {
-      score += 8;
-      factors.push({
-        label: "Famille à venir",
-        impact: "positif",
-        detail:
-          "Avant l'arrivée d'enfants, c'est le bon moment pour passer à une propriété plus grande.",
-      });
-    } else if (planningKids === "maybe") {
-      score += 3;
-    }
-  }
-
-  // Situation financière
+  // Situation financière — drives next-mortgage qualification
   const finance = answers.financialSituation as string | undefined;
   if (finance === "employed" || finance === "retired") {
-    score += 8;
+    score += 12;
     factors.push({
       label: "Profil financier solide",
       impact: "positif",
@@ -156,7 +100,7 @@ export function computeScore(answers: Answers): ScoreResult {
         "Votre situation financière prévisible facilite l'obtention d'une nouvelle pré-approbation hypothécaire.",
     });
   } else if (finance === "investor") {
-    score += 6;
+    score += 9;
     factors.push({
       label: "Revenus de placements",
       impact: "positif",
@@ -164,7 +108,7 @@ export function computeScore(answers: Answers): ScoreResult {
         "Des revenus de placements stables sont bien vus par les prêteurs, surtout si bien documentés.",
     });
   } else if (finance === "selfEmployed" || finance === "entrepreneur") {
-    score += 3;
+    score += 4;
     factors.push({
       label: "Revenus d'affaires",
       impact: "neutre",
@@ -172,7 +116,7 @@ export function computeScore(answers: Answers): ScoreResult {
         "Les prêteurs demanderont généralement 2 ans d'avis de cotisation. À préparer en amont avec votre comptable.",
     });
   } else if (finance === "transition") {
-    score -= 10;
+    score -= 14;
     factors.push({
       label: "En transition financière",
       impact: "negatif",
@@ -187,5 +131,5 @@ export function computeScore(answers: Answers): ScoreResult {
   const verdict: ScoreResult["verdict"] =
     score >= 65 ? "favorable" : score >= 45 ? "moyen" : "defavorable";
 
-  return { score, verdict, factors, appreciation };
+  return { score, verdict, factors, appreciation: null };
 }

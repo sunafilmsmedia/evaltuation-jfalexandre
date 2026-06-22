@@ -7,6 +7,7 @@ import type { ScoreResult } from "@/app/lib/scoring";
 import QuestionInput from "./QuestionInput";
 import ResultScreen, { type AIReport } from "./ResultScreen";
 import RegionPickerMapClient from "./RegionPickerMapClient";
+import AILoading from "./AILoading";
 
 type Answers = Record<string, unknown>;
 
@@ -82,11 +83,16 @@ export default function FormFlow() {
     setSubmitting(true);
     setError(null);
     try {
-      const analyzeRes = await fetch("/api/analyze", {
+      // Run the analyze request and a 2-second min display of the AI loader
+      // in parallel — show the result only when BOTH finish, so the loader
+      // is always visible long enough to read regardless of API latency.
+      const minDelay = new Promise((resolve) => setTimeout(resolve, 2000));
+      const fetchPromise = fetch("/api/analyze", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ answers }),
       });
+      const [analyzeRes] = await Promise.all([fetchPromise, minDelay]);
       if (!analyzeRes.ok) throw new Error("Analyse impossible");
       const data = (await analyzeRes.json()) as {
         score: ScoreResult;
@@ -106,6 +112,10 @@ export default function FormFlow() {
       setSubmitting(false);
     }
   };
+
+  if (submitting) {
+    return <AILoading />;
+  }
 
   if (result) {
     return (

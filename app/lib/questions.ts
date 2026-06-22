@@ -57,16 +57,6 @@ export const questions: Question[] = [
     required: true,
   },
   {
-    id: "purchasePrice",
-    type: "currency",
-    title: "À combien l'avez-vous achetée ?",
-    subtitle: "Prix d'achat initial.",
-    placeholder: "350 000",
-    min: 0,
-    step: 1000,
-    required: true,
-  },
-  {
     id: "estimatedValue",
     type: "currency",
     title: "Combien penses-tu qu'elle vaut aujourd'hui ?",
@@ -87,47 +77,6 @@ export const questions: Question[] = [
       { value: "less50", label: "Il reste entre 25 % et 50 %" },
       { value: "more50", label: "Il reste plus de 50 %" },
       { value: "unsure", label: "Je ne suis pas certain·e" },
-    ],
-  },
-  {
-    id: "hasKids",
-    type: "single",
-    title: "Avez-vous des enfants en ce moment ?",
-    required: true,
-    options: [
-      { value: "yes", label: "Oui" },
-      { value: "no", label: "Non" },
-    ],
-  },
-  {
-    id: "kidsStatus",
-    type: "single",
-    title: "Où en sont vos enfants ?",
-    subtitle:
-      "Cela influence beaucoup l'espace dont vous aurez besoin dans les prochaines années.",
-    required: true,
-    showIf: (a) => a.hasKids === "yes",
-    options: [
-      { value: "leftHome", label: "Ils ont déjà quitté la maison" },
-      {
-        value: "leavingSoon",
-        label: "Ils vont quitter bientôt (moins de 3 ans)",
-      },
-      { value: "stillHome", label: "Ils vivent encore à la maison" },
-      { value: "growing", label: "Ils sont jeunes, on manque d'espace" },
-    ],
-  },
-  {
-    id: "planningKids",
-    type: "single",
-    title: "Pensez-vous en avoir bientôt ?",
-    subtitle: "Et auriez-vous besoin d'agrandir votre espace ?",
-    required: true,
-    showIf: (a) => a.hasKids === "no",
-    options: [
-      { value: "yesSoon", label: "Oui, dans les prochaines années" },
-      { value: "maybe", label: "Peut-être, on y pense" },
-      { value: "no", label: "Non, ce n'est pas dans nos plans" },
     ],
   },
   {

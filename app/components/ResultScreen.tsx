@@ -175,9 +175,12 @@ export default function ResultScreen({ score, report, answers }: Props) {
             transition={{ duration: 0.3, delay: 0.1 }}
             className="mt-5 rounded-2xl md:rounded-3xl bg-white/90 backdrop-blur-md border border-blue-100 shadow-xl shadow-blue-100/40 p-6 md:p-9"
           >
-            <h2 className="font-display text-xl md:text-2xl text-[#0a2540] leading-tight mb-1.5">
-              À quel courriel je peux t&apos;envoyer les démarches à suivre&nbsp;?
+            <h2 className="font-display text-xl md:text-2xl text-[#0a2540] leading-tight mb-2">
+              Pourquoi cette note&nbsp;?
             </h2>
+            <p className="text-[#0a2540] text-base md:text-lg font-medium mb-3 leading-relaxed">
+              Reçois les détails par courriel ou texto.
+            </p>
             <p className="text-slate-500 text-sm md:text-base mb-5 leading-relaxed">
               Reçois ton plan personnalisé pour vendre ta propriété — étapes
               concrètes, ordre des choses à faire, et conseils sur mesure.

@@ -92,7 +92,7 @@ type Props = {
 
 export default function RegionPickerMap({ value, onChange }: Props) {
   return (
-    <div className="rounded-2xl overflow-hidden border border-blue-100 h-[360px] md:h-[400px] bg-white shadow-inner">
+    <div className="rounded-2xl overflow-hidden border border-red-100 h-[360px] md:h-[400px] bg-white shadow-inner">
       <MapContainer
         center={[45.55, -73.7]}
         zoom={11}
@@ -116,9 +116,9 @@ export default function RegionPickerMap({ value, onChange }: Props) {
               center={[r.lat, r.lng]}
               radius={selected ? 18 : 11}
               pathOptions={{
-                color: "#1d4ed8",
+                color: "#DC2626",
                 weight: selected ? 3 : 2,
-                fillColor: selected ? "#1d4ed8" : "#3b82f6",
+                fillColor: selected ? "#DC2626" : "#EF4444",
                 fillOpacity: selected ? 0.9 : 0.45,
               }}
               eventHandlers={{

@@ -10,11 +10,11 @@ export default function AILoading() {
       transition={{ duration: 0.4 }}
       className="w-full max-w-2xl mx-auto"
     >
-      <div className="rounded-2xl md:rounded-3xl bg-white/90 backdrop-blur-md border border-blue-100 shadow-xl shadow-blue-100/40 p-8 md:p-12 flex flex-col items-center text-center">
+      <div className="rounded-2xl md:rounded-3xl bg-white/90 backdrop-blur-md border border-red-100 shadow-xl shadow-red-100/40 p-8 md:p-12 flex flex-col items-center text-center">
         {/* Animated AI orb — pulsing gradient ring with sparkle */}
         <div className="relative w-20 h-20 md:w-24 md:h-24 mb-6">
           <motion.div
-            className="absolute inset-0 rounded-full bg-gradient-to-br from-[#1d4ed8] via-[#3b82f6] to-[#c9a96e]"
+            className="absolute inset-0 rounded-full bg-gradient-to-br from-[#DC2626] via-[#EF4444] to-[#c9a96e]"
             animate={{
               scale: [1, 1.08, 1],
               opacity: [0.85, 1, 0.85],
@@ -40,7 +40,7 @@ export default function AILoading() {
             transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
           >
             <svg
-              className="w-9 h-9 md:w-11 md:h-11 text-[#1d4ed8]"
+              className="w-9 h-9 md:w-11 md:h-11 text-[#DC2626]"
               viewBox="0 0 24 24"
               fill="none"
             >
@@ -53,10 +53,10 @@ export default function AILoading() {
           </motion.div>
         </div>
 
-        <p className="font-display italic text-lg md:text-xl text-[#1d4ed8] mb-1">
+        <p className="font-display italic text-lg md:text-xl text-[#DC2626] mb-1">
           L&apos;intelligence artificielle
         </p>
-        <h2 className="font-display text-2xl md:text-3xl text-[#0a2540] leading-tight mb-3">
+        <h2 className="font-display text-2xl md:text-3xl text-[#7F1D1D] leading-tight mb-3">
           détermine ta situation…
         </h2>
 
@@ -70,7 +70,7 @@ export default function AILoading() {
           {[0, 1, 2].map((i) => (
             <motion.span
               key={i}
-              className="w-2 h-2 rounded-full bg-[#1d4ed8]"
+              className="w-2 h-2 rounded-full bg-[#DC2626]"
               animate={{ opacity: [0.3, 1, 0.3] }}
               transition={{
                 duration: 1.2,

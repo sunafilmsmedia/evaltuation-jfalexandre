@@ -139,9 +139,9 @@ export default function FormFlow() {
           </span>
           <span>{Math.round(progress)} %</span>
         </div>
-        <div className="h-1 bg-blue-100 rounded-full overflow-hidden">
+        <div className="h-1 bg-red-100 rounded-full overflow-hidden">
           <motion.div
-            className="h-full bg-gradient-to-r from-[#1d4ed8] to-[#3b82f6] rounded-full"
+            className="h-full bg-gradient-to-r from-[#DC2626] to-[#EF4444] rounded-full"
             initial={false}
             animate={{ width: `${progress}%` }}
             transition={{ duration: 0.4, ease: "easeOut" }}
@@ -163,9 +163,9 @@ export default function FormFlow() {
               x: { type: "spring", stiffness: 320, damping: 32 },
               opacity: { duration: 0.2 },
             }}
-            className="rounded-2xl md:rounded-3xl bg-white/90 backdrop-blur-md border border-blue-100 shadow-xl shadow-blue-100/40 p-5 md:p-8"
+            className="rounded-2xl md:rounded-3xl bg-white/90 backdrop-blur-md border border-red-100 shadow-xl shadow-red-100/40 p-5 md:p-8"
           >
-            <h2 className="font-display text-xl md:text-2xl text-[#0a2540] leading-tight mb-1.5">
+            <h2 className="font-display text-xl md:text-2xl text-[#7F1D1D] leading-tight mb-1.5">
               {current.title}
             </h2>
             {current.subtitle && (
@@ -207,7 +207,7 @@ export default function FormFlow() {
           type="button"
           onClick={back}
           disabled={index === 0 || submitting}
-          className="text-xs md:text-sm font-medium text-slate-500 hover:text-[#1d4ed8] disabled:opacity-30 disabled:cursor-not-allowed transition-colors px-2 md:px-3 py-2"
+          className="text-xs md:text-sm font-medium text-slate-500 hover:text-[#DC2626] disabled:opacity-30 disabled:cursor-not-allowed transition-colors px-2 md:px-3 py-2"
         >
           ← Précédent
         </button>
@@ -216,7 +216,7 @@ export default function FormFlow() {
           type="button"
           onClick={next}
           disabled={!canAdvance() || submitting}
-          className="inline-flex items-center gap-2 px-5 md:px-6 py-2.5 md:py-3 rounded-full bg-[#1d4ed8] text-white text-sm md:text-base font-medium shadow-lg shadow-blue-200 hover:bg-[#1e40af] disabled:bg-slate-300 disabled:shadow-none disabled:cursor-not-allowed transition-all"
+          className="inline-flex items-center gap-2 px-5 md:px-6 py-2.5 md:py-3 rounded-full bg-[#DC2626] text-white text-sm md:text-base font-medium shadow-lg shadow-red-200 hover:bg-[#991B1B] disabled:bg-slate-300 disabled:shadow-none disabled:cursor-not-allowed transition-all"
         >
           {submitting ? (
             <>

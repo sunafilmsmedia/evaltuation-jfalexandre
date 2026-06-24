@@ -28,20 +28,20 @@ export default function QuestionInput({
               type="button"
               onClick={() => {
                 onChange(opt.value);
-                // Pause ~500ms so the button visibly turns brand-blue before
+                // Pause ~500ms so the button visibly turns brand-red before
                 // the slide — clear confirmation of what was just picked.
                 setTimeout(() => onAdvance(opt.value), 500);
               }}
               className={`text-left px-4 md:px-5 py-3 md:py-4 rounded-xl md:rounded-2xl border transition-all duration-200 ${
                 selected
-                  ? "border-[#1d4ed8] bg-[#1d4ed8] text-white shadow-lg shadow-blue-200"
-                  : "border-blue-100 bg-white/80 backdrop-blur-sm text-[#0a2540] hover:border-[#1d4ed8] hover:bg-blue-50"
+                  ? "border-[#DC2626] bg-[#DC2626] text-white shadow-lg shadow-red-200"
+                  : "border-red-100 bg-white/80 backdrop-blur-sm text-[#7F1D1D] hover:border-[#DC2626] hover:bg-red-50"
               }`}
             >
               <span className="block text-sm md:text-base font-medium">{opt.label}</span>
               {opt.hint && (
                 <span
-                  className={`block text-xs mt-1 ${selected ? "text-blue-100" : "text-slate-500"}`}
+                  className={`block text-xs mt-1 ${selected ? "text-red-100" : "text-slate-500"}`}
                 >
                   {opt.hint}
                 </span>
@@ -70,15 +70,15 @@ export default function QuestionInput({
               onClick={() => toggle(opt.value)}
               className={`text-left px-5 py-4 rounded-2xl border transition-all duration-200 flex items-center gap-3 ${
                 selected
-                  ? "border-[#1d4ed8] bg-blue-50 text-[#0a2540]"
-                  : "border-blue-100 bg-white/80 backdrop-blur-sm text-[#0a2540] hover:border-[#1d4ed8]"
+                  ? "border-[#DC2626] bg-red-50 text-[#7F1D1D]"
+                  : "border-red-100 bg-white/80 backdrop-blur-sm text-[#7F1D1D] hover:border-[#DC2626]"
               }`}
             >
               <span
                 className={`w-5 h-5 rounded-md flex items-center justify-center border-2 transition-colors ${
                   selected
-                    ? "bg-[#1d4ed8] border-[#1d4ed8]"
-                    : "border-blue-200"
+                    ? "bg-[#DC2626] border-[#DC2626]"
+                    : "border-red-200"
                 }`}
               >
                 {selected && (
@@ -125,7 +125,7 @@ export default function QuestionInput({
             onKeyDown={(e) => {
               if (e.key === "Enter") onAdvance();
             }}
-            className="w-full px-5 py-4 text-3xl font-display text-[#0a2540] bg-white/80 backdrop-blur-sm border border-blue-100 rounded-2xl focus:outline-none focus:border-[#1d4ed8] focus:ring-4 focus:ring-blue-100"
+            className="w-full px-5 py-4 text-3xl font-display text-[#7F1D1D] bg-white/80 backdrop-blur-sm border border-red-100 rounded-2xl focus:outline-none focus:border-[#DC2626] focus:ring-4 focus:ring-red-100"
           />
           {question.suffix && (
             <span className="text-xl text-slate-500 font-medium">
@@ -168,7 +168,7 @@ export default function QuestionInput({
             onKeyDown={(e) => {
               if (e.key === "Enter") onAdvance();
             }}
-            className="w-full pl-10 pr-5 py-4 text-3xl font-display text-[#0a2540] bg-white/80 backdrop-blur-sm border border-blue-100 rounded-2xl focus:outline-none focus:border-[#1d4ed8] focus:ring-4 focus:ring-blue-100"
+            className="w-full pl-10 pr-5 py-4 text-3xl font-display text-[#7F1D1D] bg-white/80 backdrop-blur-sm border border-red-100 rounded-2xl focus:outline-none focus:border-[#DC2626] focus:ring-4 focus:ring-red-100"
           />
           <span className="absolute left-4 top-1/2 -translate-y-1/2 text-2xl text-slate-400">
             $
@@ -188,7 +188,7 @@ export default function QuestionInput({
         onKeyDown={(e) => {
           if (e.key === "Enter") onAdvance();
         }}
-        className="w-full px-5 py-4 text-xl text-[#0a2540] bg-white/80 backdrop-blur-sm border border-blue-100 rounded-2xl focus:outline-none focus:border-[#1d4ed8] focus:ring-4 focus:ring-blue-100"
+        className="w-full px-5 py-4 text-xl text-[#7F1D1D] bg-white/80 backdrop-blur-sm border border-red-100 rounded-2xl focus:outline-none focus:border-[#DC2626] focus:ring-4 focus:ring-red-100"
       />
     );
   }

@@ -5,7 +5,7 @@ import dynamic from "next/dynamic";
 const RegionPickerMap = dynamic(() => import("./RegionPickerMap"), {
   ssr: false,
   loading: () => (
-    <div className="rounded-2xl border border-blue-100 h-[360px] md:h-[400px] bg-blue-50/40 animate-pulse" />
+    <div className="rounded-2xl border border-red-100 h-[360px] md:h-[400px] bg-red-50/40 animate-pulse" />
   ),
 });
 

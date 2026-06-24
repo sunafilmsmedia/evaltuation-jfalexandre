@@ -10,9 +10,8 @@ export default function MontrealMap() {
       <div
         className="absolute inset-0"
         style={{
-          // greyscale → sepia → boost saturation → shift to brand red → fade
-          filter:
-            "grayscale(1) brightness(1.05) sepia(1) saturate(5) hue-rotate(340deg) opacity(0.65)",
+          // Pure black & white so the red brand UI pops on top
+          filter: "grayscale(1) brightness(1.02) contrast(0.95) opacity(0.55)",
         }}
       >
         <MapContainer

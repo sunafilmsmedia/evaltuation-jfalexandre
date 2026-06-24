@@ -37,17 +37,17 @@ body {
   font-family: var(--font-display), Georgia, serif;
 }
 
-/* Subtle radial vignette so the 3D house blends into the page */
+/* Subtle vignette — purely neutral so the brand red stays the only color */
 .page-vignette {
   background:
     radial-gradient(
       1200px 600px at 50% 10%,
-      rgba(239, 68, 68, 0.08),
+      rgba(0, 0, 0, 0.04),
       transparent 70%
     ),
     radial-gradient(
       900px 500px at 80% 90%,
-      rgba(201, 169, 110, 0.06),
+      rgba(0, 0, 0, 0.03),
       transparent 70%
     ),
     #ffffff;

@@ -8,6 +8,7 @@ import QuestionInput from "./QuestionInput";
 import ResultScreen, { type AIReport } from "./ResultScreen";
 import RegionPickerMapClient from "./RegionPickerMapClient";
 import AILoading from "./AILoading";
+import ResultGate from "./ResultGate";
 
 type Answers = Record<string, unknown>;
 
@@ -33,6 +34,11 @@ export default function FormFlow() {
     score: ScoreResult;
     report: AIReport;
   } | null>(null);
+  // Whether the user has chosen to gate behind the contact form (option 1)
+  // or skip straight to the result with optional form below (option 2).
+  const [gateChoice, setGateChoice] = useState<"contact" | "direct" | null>(
+    null,
+  );
 
   // Filter visible questions based on conditional branching
   const visibleQuestions = useMemo(
@@ -117,12 +123,17 @@ export default function FormFlow() {
     return <AILoading />;
   }
 
-  if (result) {
+  if (result && !gateChoice) {
+    return <ResultGate onChoice={setGateChoice} />;
+  }
+
+  if (result && gateChoice) {
     return (
       <ResultScreen
         score={result.score}
         report={result.report}
         answers={answers}
+        mode={gateChoice === "contact" ? "gated" : "open"}
       />
     );
   }

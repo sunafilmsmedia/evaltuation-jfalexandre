@@ -17,6 +17,13 @@ type Props = {
   score: ScoreResult;
   report: AIReport;
   answers: Record<string, unknown>;
+  /**
+   * "gated": score + rest of report are hidden until the contact form is
+   * submitted. Used when the visitor opted to receive the free phone analysis.
+   * "open":  everything is visible right away; the contact form sits below
+   * the score and is optional (still fires the GHL pixel + webhook on submit).
+   */
+  mode: "gated" | "open";
 };
 
 type LeadDraft = {
@@ -79,7 +86,12 @@ function ScoreCard({ score }: { score: ScoreResult }) {
   );
 }
 
-export default function ResultScreen({ score, report, answers }: Props) {
+export default function ResultScreen({
+  score,
+  report,
+  answers,
+  mode,
+}: Props) {
   const [lead, setLead] = useState<LeadDraft>({
     name: "",
     email: "",
@@ -136,6 +148,191 @@ export default function ResultScreen({ score, report, answers }: Props) {
 
   const isSubmitted = submittedStored !== null;
   const firstName = lead.name ? lead.name.trim().split(" ")[0] : "";
+  // The report (score + rest of info) is hidden in gated mode until lead capture.
+  const showReport = mode === "open" || isSubmitted;
+
+  // ---- Lead form / success block (always rendered, content varies) ----
+  const leadBlock = !isSubmitted ? (
+    <motion.form
+      key="lead-form"
+      onSubmit={handleSubmit}
+      initial={{ opacity: 0, y: 12 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -8 }}
+      transition={{ duration: 0.3 }}
+      className="rounded-2xl md:rounded-3xl bg-white/90 backdrop-blur-md border border-red-100 shadow-xl shadow-red-100/40 p-6 md:p-9"
+    >
+      {mode === "gated" ? (
+        <>
+          <h2 className="font-display text-2xl md:text-3xl text-[#7F1D1D] leading-tight mb-2">
+            Ton évaluation t&apos;attend
+          </h2>
+          <p className="text-[#7F1D1D] text-base md:text-lg font-medium mb-3 leading-relaxed">
+            Laisse tes coordonnées pour la recevoir avec ton analyse gratuite
+            par téléphone.
+          </p>
+          <p className="text-slate-500 text-sm md:text-base mb-5 leading-relaxed">
+            Étapes concrètes, ordre des choses à faire, conseils sur mesure —
+            tout adapté à ta situation.
+          </p>
+        </>
+      ) : (
+        <>
+          <h2 className="font-display text-xl md:text-2xl text-[#7F1D1D] leading-tight mb-2">
+            Pourquoi cette note&nbsp;?
+          </h2>
+          <p className="text-[#7F1D1D] text-base md:text-lg font-medium mb-3 leading-relaxed">
+            Reçois les détails par courriel ou texto.
+          </p>
+          <p className="text-slate-500 text-sm md:text-base mb-5 leading-relaxed">
+            Reçois ton plan personnalisé pour vendre ta propriété — étapes
+            concrètes, ordre des choses à faire, et conseils sur mesure.
+          </p>
+        </>
+      )}
+
+      <div className="grid gap-3">
+        <label className="block">
+          <span className="text-xs md:text-sm font-medium text-slate-600 block mb-1.5">
+            Prénom et nom
+          </span>
+          <input
+            type="text"
+            value={lead.name}
+            onBlur={() => setTouched({ ...touched, name: true })}
+            onChange={(e) => setLead({ ...lead, name: e.target.value })}
+            placeholder="Marie Tremblay"
+            className="w-full px-4 py-3 text-base md:text-lg text-[#7F1D1D] bg-white border border-red-100 rounded-xl focus:outline-none focus:border-[#DC2626] focus:ring-4 focus:ring-red-100"
+          />
+          {touched.name && !lead.name && (
+            <span className="text-xs text-rose-500 mt-1 block">
+              Ton nom est requis
+            </span>
+          )}
+        </label>
+
+        <label className="block">
+          <span className="text-xs md:text-sm font-medium text-slate-600 block mb-1.5">
+            Courriel
+          </span>
+          <input
+            type="email"
+            value={lead.email}
+            onBlur={() => setTouched({ ...touched, email: true })}
+            onChange={(e) => setLead({ ...lead, email: e.target.value })}
+            placeholder="marie@exemple.com"
+            className="w-full px-4 py-3 text-base md:text-lg text-[#7F1D1D] bg-white border border-red-100 rounded-xl focus:outline-none focus:border-[#DC2626] focus:ring-4 focus:ring-red-100"
+          />
+          {touched.email && !lead.email && (
+            <span className="text-xs text-rose-500 mt-1 block">
+              Ton courriel est requis pour recevoir tes démarches
+            </span>
+          )}
+        </label>
+
+        <label className="block">
+          <span className="text-xs md:text-sm font-medium text-slate-600 block mb-1.5">
+            Numéro de téléphone
+          </span>
+          <input
+            type="tel"
+            value={lead.phone}
+            onBlur={() => setTouched({ ...touched, phone: true })}
+            onChange={(e) => setLead({ ...lead, phone: e.target.value })}
+            placeholder="(514) 555-0123"
+            className="w-full px-4 py-3 text-base md:text-lg text-[#7F1D1D] bg-white border border-red-100 rounded-xl focus:outline-none focus:border-[#DC2626] focus:ring-4 focus:ring-red-100"
+          />
+          {touched.phone && !lead.phone && (
+            <span className="text-xs text-rose-500 mt-1 block">
+              Pour pouvoir t&apos;appeler au besoin
+            </span>
+          )}
+        </label>
+      </div>
+
+      <label className="flex items-start gap-3 cursor-pointer mt-4">
+        <input
+          type="checkbox"
+          checked={lead.consent}
+          onChange={(e) => setLead({ ...lead, consent: e.target.checked })}
+          className="mt-1 w-5 h-5 rounded border-red-200 text-[#DC2626] focus:ring-red-200"
+        />
+        <span className="text-xs md:text-sm text-slate-600 leading-relaxed">
+          J&apos;accepte d&apos;être contacté·e au sujet de l&apos;évaluation
+          de ma propriété.
+        </span>
+      </label>
+
+      {error && <p className="text-rose-500 text-sm mt-3">{error}</p>}
+
+      <button
+        type="submit"
+        disabled={!canSubmit}
+        className="mt-5 w-full inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-full bg-[#DC2626] text-white text-base font-medium shadow-lg shadow-red-200 hover:bg-[#991B1B] disabled:bg-slate-300 disabled:shadow-none disabled:cursor-not-allowed transition-all"
+      >
+        {submitting ? (
+          <>
+            <svg
+              className="w-4 h-4 animate-spin"
+              viewBox="0 0 24 24"
+              fill="none"
+            >
+              <circle
+                cx="12"
+                cy="12"
+                r="10"
+                stroke="currentColor"
+                strokeWidth="3"
+                className="opacity-25"
+              />
+              <path
+                d="M4 12a8 8 0 018-8"
+                stroke="currentColor"
+                strokeWidth="3"
+                strokeLinecap="round"
+              />
+            </svg>
+            Envoi…
+          </>
+        ) : (
+          <>
+            {mode === "gated" ? "Voir ma réponse" : "Recevoir mes démarches"}
+            <svg className="w-4 h-4" viewBox="0 0 20 20" fill="none">
+              <path
+                d="M4 10h12m0 0l-4-4m4 4l-4 4"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+          </>
+        )}
+      </button>
+    </motion.form>
+  ) : (
+    <motion.div
+      key="lead-success"
+      initial={{ opacity: 0, y: 12 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.4 }}
+      className="rounded-2xl md:rounded-3xl bg-emerald-50 border border-emerald-200 p-5 md:p-6 text-emerald-800 text-sm md:text-base"
+    >
+      {submittedStored ? (
+        <>
+          ✓ Parfait{firstName ? `, ${firstName}` : ""}&nbsp;! Tes démarches
+          arrivent dans ta boîte courriel sous peu. Un courtier prendra aussi
+          contact avec toi dans les prochains jours ouvrables.
+        </>
+      ) : (
+        <>
+          ✓ Merci pour ta participation. Comme le moment ne semble pas optimal
+          pour vendre, tes coordonnées n&apos;ont pas été conservées — c&apos;est
+          notre promesse. Reviens nous voir dans quelques mois&nbsp;!
+        </>
+      )}
+    </motion.div>
+  );
 
   return (
     <motion.div
@@ -144,198 +341,48 @@ export default function ResultScreen({ score, report, answers }: Props) {
       transition={{ duration: 0.5 }}
       className="w-full max-w-3xl mx-auto"
     >
-      {/* --- Preview card: always visible --- */}
-      <div className="rounded-2xl md:rounded-3xl bg-white/90 backdrop-blur-md border border-red-100 shadow-xl shadow-red-100/40 p-6 md:p-9">
-        <div className="flex items-center justify-between flex-wrap gap-3 mb-3">
-          <VerdictBadge verdict={score.verdict} />
-          <span className="text-[10px] md:text-xs text-slate-400 uppercase tracking-wider">
-            Évaluation préliminaire
-          </span>
-        </div>
-
-        <h1 className="font-display text-2xl md:text-4xl text-[#7F1D1D] leading-tight mb-2 md:mb-3">
-          {report.headline}
-        </h1>
-        <p className="text-slate-600 text-base md:text-lg leading-relaxed mb-5 md:mb-7">
-          {report.summary}
-        </p>
-
-        <ScoreCard score={score} />
-      </div>
-
-      {/* --- Lead form (shows below preview, hides once submitted) --- */}
-      <AnimatePresence mode="wait">
-        {!isSubmitted ? (
-          <motion.form
-            key="lead-form"
-            onSubmit={handleSubmit}
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -8 }}
-            transition={{ duration: 0.3, delay: 0.1 }}
-            className="mt-5 rounded-2xl md:rounded-3xl bg-white/90 backdrop-blur-md border border-red-100 shadow-xl shadow-red-100/40 p-6 md:p-9"
-          >
-            <h2 className="font-display text-xl md:text-2xl text-[#7F1D1D] leading-tight mb-2">
-              Pourquoi cette note&nbsp;?
-            </h2>
-            <p className="text-[#7F1D1D] text-base md:text-lg font-medium mb-3 leading-relaxed">
-              Reçois les détails par courriel ou texto.
-            </p>
-            <p className="text-slate-500 text-sm md:text-base mb-5 leading-relaxed">
-              Reçois ton plan personnalisé pour vendre ta propriété — étapes
-              concrètes, ordre des choses à faire, et conseils sur mesure.
-            </p>
-
-            <div className="grid gap-3">
-              <label className="block">
-                <span className="text-xs md:text-sm font-medium text-slate-600 block mb-1.5">
-                  Prénom et nom
-                </span>
-                <input
-                  type="text"
-                  value={lead.name}
-                  onBlur={() => setTouched({ ...touched, name: true })}
-                  onChange={(e) => setLead({ ...lead, name: e.target.value })}
-                  placeholder="Marie Tremblay"
-                  className="w-full px-4 py-3 text-base md:text-lg text-[#7F1D1D] bg-white border border-red-100 rounded-xl focus:outline-none focus:border-[#DC2626] focus:ring-4 focus:ring-red-100"
-                />
-                {touched.name && !lead.name && (
-                  <span className="text-xs text-rose-500 mt-1 block">
-                    Ton nom est requis
-                  </span>
-                )}
-              </label>
-
-              <label className="block">
-                <span className="text-xs md:text-sm font-medium text-slate-600 block mb-1.5">
-                  Courriel
-                </span>
-                <input
-                  type="email"
-                  value={lead.email}
-                  onBlur={() => setTouched({ ...touched, email: true })}
-                  onChange={(e) => setLead({ ...lead, email: e.target.value })}
-                  placeholder="marie@exemple.com"
-                  className="w-full px-4 py-3 text-base md:text-lg text-[#7F1D1D] bg-white border border-red-100 rounded-xl focus:outline-none focus:border-[#DC2626] focus:ring-4 focus:ring-red-100"
-                />
-                {touched.email && !lead.email && (
-                  <span className="text-xs text-rose-500 mt-1 block">
-                    Ton courriel est requis pour recevoir tes démarches
-                  </span>
-                )}
-              </label>
-
-              <label className="block">
-                <span className="text-xs md:text-sm font-medium text-slate-600 block mb-1.5">
-                  Numéro de téléphone
-                </span>
-                <input
-                  type="tel"
-                  value={lead.phone}
-                  onBlur={() => setTouched({ ...touched, phone: true })}
-                  onChange={(e) => setLead({ ...lead, phone: e.target.value })}
-                  placeholder="(514) 555-0123"
-                  className="w-full px-4 py-3 text-base md:text-lg text-[#7F1D1D] bg-white border border-red-100 rounded-xl focus:outline-none focus:border-[#DC2626] focus:ring-4 focus:ring-red-100"
-                />
-                {touched.phone && !lead.phone && (
-                  <span className="text-xs text-rose-500 mt-1 block">
-                    Pour pouvoir t&apos;appeler au besoin
-                  </span>
-                )}
-              </label>
-            </div>
-
-            <label className="flex items-start gap-3 cursor-pointer mt-4">
-              <input
-                type="checkbox"
-                checked={lead.consent}
-                onChange={(e) =>
-                  setLead({ ...lead, consent: e.target.checked })
-                }
-                className="mt-1 w-5 h-5 rounded border-red-200 text-[#DC2626] focus:ring-red-200"
-              />
-              <span className="text-xs md:text-sm text-slate-600 leading-relaxed">
-                J&apos;accepte d&apos;être contacté·e au sujet de l&apos;évaluation de ma
-                propriété.
-              </span>
-            </label>
-
-            {error && (
-              <p className="text-rose-500 text-sm mt-3">{error}</p>
-            )}
-
-            <button
-              type="submit"
-              disabled={!canSubmit}
-              className="mt-5 w-full inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-full bg-[#DC2626] text-white text-base font-medium shadow-lg shadow-red-200 hover:bg-[#991B1B] disabled:bg-slate-300 disabled:shadow-none disabled:cursor-not-allowed transition-all"
-            >
-              {submitting ? (
-                <>
-                  <svg
-                    className="w-4 h-4 animate-spin"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                  >
-                    <circle
-                      cx="12"
-                      cy="12"
-                      r="10"
-                      stroke="currentColor"
-                      strokeWidth="3"
-                      className="opacity-25"
-                    />
-                    <path
-                      d="M4 12a8 8 0 018-8"
-                      stroke="currentColor"
-                      strokeWidth="3"
-                      strokeLinecap="round"
-                    />
-                  </svg>
-                  Envoi…
-                </>
-              ) : (
-                <>
-                  Recevoir mes démarches
-                  <svg className="w-4 h-4" viewBox="0 0 20 20" fill="none">
-                    <path
-                      d="M4 10h12m0 0l-4-4m4 4l-4 4"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    />
-                  </svg>
-                </>
-              )}
-            </button>
-          </motion.form>
-        ) : (
+      {/* 1. Score / preview card — hidden until lead-capture in gated mode */}
+      <AnimatePresence>
+        {showReport && (
           <motion.div
-            key="full-report"
+            key="score-card"
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4 }}
-            className="mt-5 rounded-2xl md:rounded-3xl bg-white/90 backdrop-blur-md border border-red-100 shadow-xl shadow-red-100/40 p-6 md:p-9"
+            className="rounded-2xl md:rounded-3xl bg-white/90 backdrop-blur-md border border-red-100 shadow-xl shadow-red-100/40 p-6 md:p-9 mb-5"
           >
-            {/* Confirmation message */}
-            <div className="mb-7 p-4 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-sm md:text-base">
-              {submittedStored ? (
-                <>
-                  ✓ Parfait{firstName ? `, ${firstName}` : ""}&nbsp;! Tes
-                  démarches arrivent dans ta boîte courriel sous peu. Un
-                  courtier prendra aussi contact avec toi dans les prochains
-                  jours ouvrables.
-                </>
-              ) : (
-                <>
-                  ✓ Merci pour ta participation. Comme le moment ne semble pas
-                  optimal pour vendre, tes coordonnées n&apos;ont pas été conservées
-                  — c&apos;est notre promesse. Revis-nous voir dans quelques
-                  mois&nbsp;!
-                </>
-              )}
+            <div className="flex items-center justify-between flex-wrap gap-3 mb-3">
+              <VerdictBadge verdict={score.verdict} />
+              <span className="text-[10px] md:text-xs text-slate-400 uppercase tracking-wider">
+                Évaluation préliminaire
+              </span>
             </div>
 
+            <h1 className="font-display text-2xl md:text-4xl text-[#7F1D1D] leading-tight mb-2 md:mb-3">
+              {report.headline}
+            </h1>
+            <p className="text-slate-600 text-base md:text-lg leading-relaxed mb-5 md:mb-7">
+              {report.summary}
+            </p>
+
+            <ScoreCard score={score} />
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* 2. Contact form (or success state) — always shown, right under the score */}
+      <AnimatePresence mode="wait">{leadBlock}</AnimatePresence>
+
+      {/* 3. Rest of info — stats, market insight, factors, steps */}
+      <AnimatePresence>
+        {showReport && (
+          <motion.div
+            key="rest-of-info"
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4, delay: 0.1 }}
+            className="mt-5 rounded-2xl md:rounded-3xl bg-white/90 backdrop-blur-md border border-red-100 shadow-xl shadow-red-100/40 p-6 md:p-9"
+          >
             {/* Stats */}
             <div className="grid md:grid-cols-3 gap-3 mb-7">
               {report.stats.slice(1, 4).map((stat) => (

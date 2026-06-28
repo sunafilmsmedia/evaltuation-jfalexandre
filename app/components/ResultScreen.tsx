@@ -131,11 +131,15 @@ export default function ResultScreen({
         stored?: boolean;
       };
 
-      // Fire Meta Pixel "Lead" (= "Prospect" FR)
-      trackFbEvent("Lead", {
-        score: score.score,
-        verdict: score.verdict,
-      });
+      // Only fire the Meta Lead event when the lead was actually stored
+      // (score >= 50). Matches the CRM webhook behavior — we don't want
+      // Meta to optimize toward sub-threshold leads that we drop anyway.
+      if (json.stored) {
+        trackFbEvent("Lead", {
+          score: score.score,
+          verdict: score.verdict,
+        });
+      }
 
       setSubmittedStored(Boolean(json.stored));
     } catch (err) {
